@@ -36,7 +36,7 @@ ssize_t Qiniu_Posix_Pread(Qiniu_Posix_Handle fd, void* buf, size_t nbytes, off_t
 	return -1;
 }
 
-time_t fileTime2time_t(FILETIME ft)
+static time_t fileTime2time_t(FILETIME ft)
 {
 	ULONGLONG ll = ft.dwLowDateTime | ((ULONGLONG)ft.dwHighDateTime << 32);
 	return (time_t)((ll - 116444736000000000) / 10000000);
