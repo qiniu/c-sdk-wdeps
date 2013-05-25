@@ -9,7 +9,7 @@
 #ifndef QINIU_EMU_POSIX_H
 #define QINIU_EMU_POSIX_H
 
-#include <winbase.h>
+#include <windows.h>
 #include <sys/types.h>
 
 /*============================================================================*/
@@ -27,7 +27,7 @@ typedef _W64 int ssize_t;
 #define Qiniu_Posix_Handle			HANDLE
 #define Qiniu_Posix_InvalidHandle	INVALID_HANDLE_VALUE
 
-int Qiniu_Posix_Open(const char* file, int oflag, int mode);
+Qiniu_Posix_Handle Qiniu_Posix_Open(const char* file, int oflag, int mode);
 ssize_t Qiniu_Posix_Pread(Qiniu_Posix_Handle fd, void* buf, size_t nbytes, off_t offset);
 int Qiniu_Posix_Fstat(Qiniu_Posix_Handle fd, struct stat* buf);
 int Qiniu_Posix_Close(Qiniu_Posix_Handle fd);

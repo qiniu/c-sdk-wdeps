@@ -1,3 +1,6 @@
+Debug/
+Release/
+
 # Object files
 *.o
 
@@ -12,3 +15,8 @@
 *.exe
 *.out
 *.app
+
+*.dsw
+*.ncb
+*.opt
+*.plg
