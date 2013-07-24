@@ -15,6 +15,7 @@ Qiniu_Posix_Handle Qiniu_Posix_Open(const char* file, int oflag, int mode)
 	Qiniu_Posix_Handle fd = CreateFileA(
 		file, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, NULL);
 	if (fd != INVALID_HANDLE_VALUE) {
+		errno = 0;
 		return fd;
 	}
 	errno = GetLastError();
@@ -27,9 +28,10 @@ ssize_t Qiniu_Posix_Pread(Qiniu_Posix_Handle fd, void* buf, size_t nbytes, off_t
 	DWORD nreaded = 0;
 	OVERLAPPED o = {0};
 	o.Offset = (DWORD)offset;
-	o.OffsetHigh = (DWORD)(offset >> 32);
+	o.OffsetHigh = 0;
 	ret = ReadFile(fd, buf, nbytes, &nreaded, &o);
 	if (ret) {
+		errno = 0;
 		return nreaded;
 	}
 	errno = GetLastError();
@@ -52,6 +54,7 @@ int Qiniu_Posix_Fstat(Qiniu_Posix_Handle fd, struct stat* buf)
 		buf->st_atime = fileTime2time_t(fi.ftLastAccessTime);
 		buf->st_mtime = fileTime2time_t(fi.ftLastWriteTime);
 		buf->st_ctime = fileTime2time_t(fi.ftCreationTime);
+		errno = 0;
 		return 0;
 	}
 	errno = GetLastError();
@@ -62,6 +65,7 @@ int Qiniu_Posix_Close(Qiniu_Posix_Handle fd)
 {
 	BOOL ret = CloseHandle(fd);
 	if (ret) {
+		errno = 0;
 		return 0;
 	}
 	errno = GetLastError();
