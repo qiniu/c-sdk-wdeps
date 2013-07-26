@@ -12,6 +12,11 @@
 #include <windows.h>
 #include <sys/types.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /*============================================================================*/
 /* type ssize_t */
 
@@ -33,6 +38,10 @@ int Qiniu_Posix_Fstat(Qiniu_Posix_Handle fd, struct stat* buf);
 int Qiniu_Posix_Close(Qiniu_Posix_Handle fd);
 
 /*============================================================================*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* QINIU_EMU_POSIX_H */
 
