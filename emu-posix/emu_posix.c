@@ -22,13 +22,13 @@ Qiniu_Posix_Handle Qiniu_Posix_Open(const char* file, int oflag, int mode)
 	return INVALID_HANDLE_VALUE;
 }
 
-ssize_t Qiniu_Posix_Pread(Qiniu_Posix_Handle fd, void* buf, size_t nbytes, off_t offset)
+ssize_t Qiniu_Posix_Pread2(Qiniu_Posix_Handle fd, void* buf, size_t nbytes, Emu_Off_T offset)
 {
 	BOOL ret;
 	DWORD nreaded = 0;
 	OVERLAPPED o = {0};
-	o.Offset = (DWORD)offset;
-	o.OffsetHigh = 0;
+	o.Offset = (DWORD)(offset & (~(DWORD)0));
+	o.OffsetHigh = (DWORD)((offset >> 32) & (~(DWORD)0));
 	ret = ReadFile(fd, buf, nbytes, &nreaded, &o);
 	if (ret) {
 		errno = 0;
@@ -44,13 +44,13 @@ static time_t fileTime2time_t(FILETIME ft)
 	return (time_t)((ll - 116444736000000000) / 10000000);
 }
 
-int Qiniu_Posix_Fstat(Qiniu_Posix_Handle fd, struct stat* buf)
+int Qiniu_Posix_Fstat2(Qiniu_Posix_Handle fd, Emu_FileInfo* buf)
 {
 	BY_HANDLE_FILE_INFORMATION fi;
 	BOOL ret = GetFileInformationByHandle(fd, &fi);
 	if (ret) {
 		memset(buf, 0, sizeof(*buf));
-		buf->st_size = fi.nFileSizeLow | ((off_t)fi.nFileSizeHigh << 32);
+		buf->st_size = (Emu_Off_T)fi.nFileSizeLow | ((Emu_Off_T)fi.nFileSizeHigh << 32);
 		buf->st_atime = fileTime2time_t(fi.ftLastAccessTime);
 		buf->st_mtime = fileTime2time_t(fi.ftLastWriteTime);
 		buf->st_ctime = fileTime2time_t(fi.ftCreationTime);
